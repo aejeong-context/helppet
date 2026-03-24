@@ -27,10 +27,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const res = await bkend.auth.signup({ email, password, name: nickname });
-          if (res.accessToken) {
-            localStorage.setItem('bkend_access_token', res.accessToken);
-            localStorage.setItem('bkend_refresh_token', res.refreshToken);
-          }
           set({ user: res.user, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -42,10 +38,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const res = await bkend.auth.signin({ email, password });
-          if (res.accessToken) {
-            localStorage.setItem('bkend_access_token', res.accessToken);
-            localStorage.setItem('bkend_refresh_token', res.refreshToken);
-          }
           set({ user: res.user, isAuthenticated: true, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -57,8 +49,6 @@ export const useAuthStore = create<AuthState>()(
         try {
           await bkend.auth.signout();
         } finally {
-          localStorage.removeItem('bkend_access_token');
-          localStorage.removeItem('bkend_refresh_token');
           set({ user: null, isAuthenticated: false });
         }
       },

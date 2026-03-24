@@ -1,101 +1,50 @@
 import type { UploadedFile } from '@/types';
-import { bkendFetch } from './bkend';
+import { supabase } from './bkend';
 
-const IMAGE_CDN = process.env.NEXT_PUBLIC_IMAGE_CDN || 'https://img.bkend.ai';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const BUCKET = 'images';
 
-interface PresignedUrlResponse {
-  url: string;
-  key: string;
-  filename: string;
-  contentType: string;
+function getPublicUrl(path: string): string {
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
 }
 
-async function getPresignedUrl(file: File): Promise<PresignedUrlResponse> {
-  return bkendFetch('/files/presigned-url', {
-    method: 'POST',
-    body: JSON.stringify({
-      filename: file.name,
-      contentType: file.type,
-      fileSize: file.size,
-      visibility: 'public',
-      category: 'images',
-    }),
-  });
-}
-
-async function uploadToStorage(
-  url: string,
-  file: File,
-  onProgress?: (pct: number) => void,
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', url);
-    xhr.setRequestHeader('Content-Type', file.type);
-
-    if (onProgress) {
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
-      };
-    }
-
-    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`Upload failed: ${xhr.status}`)));
-    xhr.onerror = () => reject(new Error('Network error during upload'));
-    xhr.send(file);
-  });
-}
-
-interface FileMetadataResponse {
-  id: string;
-  key: string;
-  originalName: string;
-  contentType: string;
-  size: number;
-}
-
-async function registerFileMetadata(params: {
-  key: string;
-  originalName: string;
-  contentType: string;
-  size: number;
-}): Promise<FileMetadataResponse> {
-  return bkendFetch('/files', {
-    method: 'POST',
-    body: JSON.stringify({
-      ...params,
-      visibility: 'public',
-      category: 'images',
-    }),
-  });
-}
-
-export function getCdnUrl(key: string, width = 800, height = 600, quality = 80): string {
+export function getCdnUrl(key: string, _width = 800, _height = 600, _quality = 80): string {
   if (key.startsWith('http')) return key;
-  return `${IMAGE_CDN}/fit-in/${width}x${height}/filters:quality(${quality})/${key}`;
+  return getPublicUrl(key);
 }
 
-export function getThumbnailUrl(key: string, size = 200): string {
+export function getThumbnailUrl(key: string, _size = 200): string {
   if (key.startsWith('http')) return key;
-  return `${IMAGE_CDN}/fit-in/${size}x${size}/filters:quality(70)/${key}`;
+  return getPublicUrl(key);
 }
 
 export async function uploadFile(
   file: File,
   onProgress?: (pct: number) => void,
 ): Promise<UploadedFile> {
-  const presigned = await getPresignedUrl(file);
-  await uploadToStorage(presigned.url, file, onProgress);
-  const metadata = await registerFileMetadata({
-    key: presigned.key,
-    originalName: file.name,
-    contentType: file.type,
-    size: file.size,
-  });
+  const { data: { user } } = await supabase.auth.getUser();
+  const userId = user?.id || 'anonymous';
+  const timestamp = Date.now();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const path = `${userId}/${timestamp}-${safeName}`;
+
+  onProgress?.(0);
+
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) throw new Error(error.message);
+
+  onProgress?.(100);
 
   return {
-    id: metadata.id,
-    key: presigned.key,
-    url: getCdnUrl(presigned.key),
+    id: path,
+    key: path,
+    url: getPublicUrl(path),
     filename: file.name,
     contentType: file.type,
   };
