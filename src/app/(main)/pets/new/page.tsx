@@ -1,0 +1,147 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useCreatePet } from '@/hooks/use-pets';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { SymptomTagInput } from '@/components/ui/symptom-tag-input';
+import { ImageUploader } from '@/components/ui/image-uploader';
+
+interface PetFormData {
+  name: string;
+  species: 'dog' | 'cat' | 'other';
+  breed: string;
+  birthDate: string;
+  weight: number;
+  specialNotes?: string;
+}
+
+export default function NewPetPage() {
+  const router = useRouter();
+  const createPet = useCreatePet();
+  const [conditions, setConditions] = useState<string[]>([]);
+  const [profileImage, setProfileImage] = useState<string[]>([]);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<PetFormData>();
+
+  const birthDate = watch('birthDate');
+  const isSenior = birthDate
+    ? new Date().getFullYear() - new Date(birthDate).getFullYear() >= 7
+    : false;
+
+  const onSubmit = (data: PetFormData) => {
+    createPet.mutate(
+      {
+        ...data,
+        weight: Number(data.weight),
+        conditions,
+        isSenior,
+        profileImage: profileImage[0] || undefined,
+      },
+      { onSuccess: () => router.push('/pets') },
+    );
+  };
+
+  return (
+    <div className="max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-6">🐾 반려동물 등록</h1>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">프로필 사진 (선택)</label>
+          <ImageUploader maxFiles={1} value={profileImage} onChange={setProfileImage} />
+        </div>
+
+        <Input
+          id="pet-name"
+          label="이름"
+          placeholder="반려동물 이름"
+          error={errors.name?.message}
+          {...register('name', { required: '이름을 입력해주세요' })}
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">종</label>
+          <select
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none"
+            {...register('species', { required: true })}
+          >
+            <option value="dog">강아지</option>
+            <option value="cat">고양이</option>
+            <option value="other">기타</option>
+          </select>
+        </div>
+
+        <Input
+          id="pet-breed"
+          label="품종"
+          placeholder="예: 골든리트리버, 코리안숏헤어"
+          error={errors.breed?.message}
+          {...register('breed', { required: '품종을 입력해주세요' })}
+        />
+
+        <Input
+          id="pet-birthDate"
+          type="date"
+          label="생년월일"
+          error={errors.birthDate?.message}
+          {...register('birthDate', { required: '생년월일을 입력해주세요' })}
+        />
+
+        {isSenior && (
+          <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+            🧓 7세 이상 노견으로 자동 분류됩니다
+          </div>
+        )}
+
+        <Input
+          id="pet-weight"
+          type="number"
+          step="0.1"
+          label="체중 (kg)"
+          placeholder="예: 5.2"
+          error={errors.weight?.message}
+          {...register('weight', { required: '체중을 입력해주세요' })}
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            질병/상태 태그
+          </label>
+          <SymptomTagInput
+            tags={conditions}
+            onChange={setConditions}
+            placeholder="질병명 입력 후 Enter (예: 관절염, 심장병)"
+          />
+        </div>
+
+        <Input
+          id="pet-notes"
+          label="특이사항 (선택)"
+          placeholder="알레르기, 주의사항 등"
+          {...register('specialNotes')}
+        />
+
+        <div className="flex gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => router.back()}
+          >
+            취소
+          </Button>
+          <Button type="submit" className="flex-1" disabled={createPet.isPending}>
+            {createPet.isPending ? '등록 중...' : '등록'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}
