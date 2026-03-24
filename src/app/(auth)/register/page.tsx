@@ -62,7 +62,7 @@ export default function RegisterPage() {
             id="password"
             type="password"
             label="비밀번호"
-            placeholder="8자 이상"
+            placeholder="8자 이상 (대소문자+숫자+특수문자)"
             error={errors.password?.message}
             {...register('password', {
               required: '비밀번호를 입력해주세요',

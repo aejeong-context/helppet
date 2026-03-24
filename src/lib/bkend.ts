@@ -22,10 +22,10 @@ export async function bkendFetch(path: string, options: RequestInit = {}) {
 
 export const bkend = {
   auth: {
-    signup: (body: { email: string; password: string; nickname?: string }) =>
-      bkendFetch('/auth/email/signup', { method: 'POST', body: JSON.stringify(body) }),
+    signup: (body: { email: string; password: string; name?: string }) =>
+      bkendFetch('/auth/email/signup', { method: 'POST', body: JSON.stringify({ method: 'password', ...body }) }),
     signin: (body: { email: string; password: string }) =>
-      bkendFetch('/auth/email/signin', { method: 'POST', body: JSON.stringify(body) }),
+      bkendFetch('/auth/email/signin', { method: 'POST', body: JSON.stringify({ method: 'password', ...body }) }),
     me: () => bkendFetch('/auth/me'),
     refresh: (refreshToken: string) =>
       bkendFetch('/auth/refresh', { method: 'POST', body: JSON.stringify({ refreshToken }) }),
