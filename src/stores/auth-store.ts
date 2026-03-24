@@ -23,10 +23,10 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       isAuthenticated: false,
 
-      signup: async (email, password, _nickname) => {
+      signup: async (email, password, nickname) => {
         set({ isLoading: true });
         try {
-          const res = await bkend.auth.signup({ email, password });
+          const res = await bkend.auth.signup({ email, password, nickname });
           if (res.accessToken) {
             localStorage.setItem('bkend_access_token', res.accessToken);
             localStorage.setItem('bkend_refresh_token', res.refreshToken);

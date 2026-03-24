@@ -25,8 +25,9 @@ export default function LoginPage() {
     try {
       setError('');
       await login(data.email, data.password);
-    } catch {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      setError(msg || '이메일 또는 비밀번호가 올바르지 않습니다.');
     }
   };
 
