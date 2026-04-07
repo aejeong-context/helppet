@@ -66,49 +66,70 @@ export default function ConditionLogPage() {
       {/* 일지 리스트 */}
       {sortedLogs.length > 0 ? (
         <div className="space-y-2">
-          {[...sortedLogs].reverse().map((log, idx) => {
-            const avg = ((log.appetite + log.activity + log.pain + log.mood) / 4).toFixed(1);
-            const avgNum = Number(avg);
-            const hasExtras = !!(log.images?.length || log.symptoms?.length || log.stoolCount !== undefined || log.notes);
+          {[...sortedLogs].reverse().map((log) => {
+            const avg = ((log.appetite + log.activity + log.pain + log.mood) / 4);
+            const avgStr = avg.toFixed(1);
+            const color = avg >= 4 ? 'green' : avg >= 3 ? 'amber' : 'red';
+            const colorMap = { green: '#22c55e', amber: '#f59b20', red: '#ef4444' };
+
             return (
-              <Card
+              <button
                 key={log._id}
-                padding="sm"
-                className="cursor-pointer hover:border-primary-300 transition-colors"
+                type="button"
                 onClick={() => setSelectedLog(log)}
+                className="w-full text-left rounded-xl border border-gray-200 bg-white shadow-sm p-3 hover:border-primary-400 hover:shadow-md transition-all active:scale-[0.98]"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{formatDate(log.date)}</span>
+                {/* 상단: 날짜 + 종합점수 바 */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-gray-800">{formatDate(log.date)}</span>
                   <div className="flex items-center gap-2">
-                    {hasExtras && <span className="text-xs text-gray-300">+</span>}
-                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                      avgNum >= 4 ? 'bg-green-100 text-green-700'
-                        : avgNum >= 3 ? 'bg-amber-100 text-amber-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}>
-                      {avg}
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div
+                          key={i}
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: i <= Math.round(avg) ? colorMap[color] : '#e5e7eb' }}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-bold" style={{ color: colorMap[color] }}>
+                      {avgStr}
                     </span>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2 text-xs text-center">
+
+                {/* 중단: 4항목 한줄 요약 */}
+                <div className="flex gap-3 text-xs">
                   {(Object.keys(CONDITION_LABELS) as Array<keyof typeof CONDITION_LABELS>).map((key) => (
-                    <div key={key}>
-                      <span className="text-gray-500">{CONDITION_LABELS[key]}</span>
-                      <div className="font-bold text-primary-600">{log[key]}/5</div>
-                    </div>
+                    <span key={key} className="text-gray-500">
+                      {CONDITION_LABELS[key]} <strong className="text-gray-700">{log[key]}</strong>
+                    </span>
                   ))}
                 </div>
-                {log.symptoms && log.symptoms.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {log.symptoms.slice(0, 3).map((s) => (
-                      <span key={s} className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded">{s}</span>
-                    ))}
-                    {log.symptoms.length > 3 && (
-                      <span className="text-xs text-gray-400">+{log.symptoms.length - 3}</span>
-                    )}
-                  </div>
-                )}
-              </Card>
+
+                {/* 하단: 태그/아이콘 요약 */}
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  {log.waterIntake !== undefined && (
+                    <span className="text-xs text-blue-500">💧{log.waterIntake}</span>
+                  )}
+                  {log.stoolCount !== undefined && (
+                    <span className="text-xs text-amber-600">💩{log.stoolCount}</span>
+                  )}
+                  {log.images && log.images.length > 0 && (
+                    <span className="text-xs text-gray-400">📷{log.images.length}</span>
+                  )}
+                  {log.symptoms && log.symptoms.length > 0 && log.symptoms.slice(0, 2).map((s) => (
+                    <span key={s} className="text-xs bg-red-50 text-red-500 px-1.5 py-0.5 rounded">{s}</span>
+                  ))}
+                  {log.symptoms && log.symptoms.length > 2 && (
+                    <span className="text-xs text-gray-400">+{log.symptoms.length - 2}</span>
+                  )}
+                  {log.notes && (
+                    <span className="text-xs text-gray-400">📝</span>
+                  )}
+                  <span className="ml-auto text-xs text-gray-300">상세 &gt;</span>
+                </div>
+              </button>
             );
           })}
         </div>
