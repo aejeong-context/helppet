@@ -80,9 +80,14 @@ export default function PetDetailPage() {
         </Link>
       </div>
 
-      <Link href={`/pets`}>
-        <Button variant="outline" className="w-full">← 목록으로</Button>
-      </Link>
+      <div className="flex gap-3">
+        <Link href={`/pets/${id}/edit`} className="flex-1">
+          <Button variant="outline" className="w-full">편집</Button>
+        </Link>
+        <Link href="/pets" className="flex-1">
+          <Button variant="outline" className="w-full">← 목록으로</Button>
+        </Link>
+      </div>
     </div>
   );
 }
