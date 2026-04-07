@@ -17,15 +17,26 @@ const NAV_ITEMS = [
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, fetchMe } = useAuthStore();
+  const { isAuthenticated, isLoading, hasHydrated, initAuth } = useAuthStore();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const unsubscribe = initAuth();
+    return () => unsubscribe();
+  }, [initAuth]);
+
+  useEffect(() => {
+    if (hasHydrated && !isLoading && !isAuthenticated) {
       router.replace('/login');
-    } else {
-      fetchMe();
     }
-  }, [isAuthenticated, router, fetchMe]);
+  }, [hasHydrated, isLoading, isAuthenticated, router]);
+
+  if (!hasHydrated || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-400 text-sm">로딩 중...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) return null;
 
