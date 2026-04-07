@@ -111,6 +111,7 @@ export default function DashboardPage() {
       >
         <ConditionLogForm
           petId={activePetId}
+          previousLog={conditionLogs?.[conditionLogs.length - 1] || null}
           onSubmit={(data) => {
             createConditionLog.mutate(data, {
               onSuccess: () => setShowConditionForm(false),

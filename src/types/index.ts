@@ -72,6 +72,10 @@ export interface ConditionLog extends BaseDocument {
   weight?: number;
   symptoms?: string[];                  // 오늘의 증상 태그
   notes?: string;
+  images?: string[];                    // 상태 사진 (피부, 눈, 상처 등)
+  stoolCount?: number;                  // 배변 횟수
+  stoolType?: 'normal' | 'soft' | 'diarrhea' | 'hard' | 'bloody';  // 배변 상태
+  waterIntake?: 1 | 2 | 3 | 4 | 5;    // 수분 섭취 (1=매우적음 ~ 5=충분)
 }
 
 // Medication Log (투약 체크 기록)
