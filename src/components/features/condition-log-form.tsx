@@ -48,6 +48,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
   const [symptoms, setSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [date, setDate] = useState(getToday());
   const [stoolCount, setStoolCount] = useState('');
   const [stoolType, setStoolType] = useState<ConditionLog['stoolType']>('normal');
   const [waterIntake, setWaterIntake] = useState<1 | 2 | 3 | 4 | 5>(3);
@@ -57,7 +58,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
   const handleSubmit = () => {
     onSubmit({
       petId,
-      date: getToday(),
+      date,
       appetite,
       activity,
       pain,
@@ -91,6 +92,15 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
           </div>
         </div>
       )}
+
+      {/* 날짜 선택 */}
+      <Input
+        id="cond-date"
+        type="date"
+        label="기록 날짜"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+      />
 
       {/* 기본 컨디션 슬라이더 */}
       <div className="space-y-3">
