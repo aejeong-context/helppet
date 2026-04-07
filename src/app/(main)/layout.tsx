@@ -19,26 +19,17 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const router = useRouter();
   const { isAuthenticated, isLoading, hasHydrated, initAuth } = useAuthStore();
 
-  useEffect(() => {
-    const unsubscribe = initAuth();
-    return () => unsubscribe();
-  }, [initAuth]);
+  // TODO: 개발 완료 후 인증 로직 복원
+  // useEffect(() => {
+  //   const unsubscribe = initAuth();
+  //   return () => unsubscribe();
+  // }, [initAuth]);
 
-  useEffect(() => {
-    if (hasHydrated && !isLoading && !isAuthenticated) {
-      router.replace('/login');
-    }
-  }, [hasHydrated, isLoading, isAuthenticated, router]);
-
-  if (!hasHydrated || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-400 text-sm">로딩 중...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) return null;
+  // useEffect(() => {
+  //   if (hasHydrated && !isLoading && !isAuthenticated) {
+  //     router.replace('/login');
+  //   }
+  // }, [hasHydrated, isLoading, isAuthenticated, router]);
 
   return (
     <div className="min-h-screen pb-16 sm:pb-0">
