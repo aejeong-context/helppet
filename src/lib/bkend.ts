@@ -43,6 +43,7 @@ const TABLE_MAP: Record<string, string> = {
   Posts: 'posts',
   Comments: 'comments',
   Adoptions: 'adoptions',
+  MedicationLogs: 'medication_logs',
 };
 
 // Tables that need user_id auto-injection on create

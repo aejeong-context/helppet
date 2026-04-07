@@ -74,6 +74,15 @@ export interface ConditionLog extends BaseDocument {
   notes?: string;
 }
 
+// Medication Log (투약 체크 기록)
+export interface MedicationLog extends BaseDocument {
+  petId: string;
+  medicationId: string;
+  date: string;              // YYYY-MM-DD
+  timeSlot: string;          // 체크한 복용 시간 (e.g., '09:00')
+  takenAt: string;           // 실제 체크한 시각 (ISO 8601)
+}
+
 // Community Post (커뮤니티 게시글)
 export interface Post extends BaseDocument {
   userId: string;

@@ -7,7 +7,7 @@ import { useConditionLogs } from '@/hooks/use-condition-logs';
 import { useUpcomingSchedules } from '@/hooks/use-health-records';
 import { useCreateConditionLog } from '@/hooks/use-condition-logs';
 import { PetSelector } from '@/components/features/pet-selector';
-import { MedicationCard } from '@/components/features/medication-card';
+import { TodayMedication } from '@/components/features/today-medication';
 import { ConditionChart } from '@/components/features/condition-chart';
 import { ConditionLogForm } from '@/components/features/condition-log-form';
 import { UpcomingSchedule } from '@/components/features/upcoming-schedule';
@@ -72,11 +72,7 @@ export default function DashboardPage() {
           </Link>
         </div>
         {medications && medications.length > 0 ? (
-          <div className="space-y-2">
-            {medications.map((med) => (
-              <MedicationCard key={med._id} medication={med} />
-            ))}
-          </div>
+          <TodayMedication petId={activePetId} medications={medications} />
         ) : (
           <Card>
             <p className="text-sm text-gray-400 text-center">등록된 투약이 없습니다</p>
