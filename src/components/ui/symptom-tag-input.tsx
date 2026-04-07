@@ -17,6 +17,7 @@ export function SymptomTagInput({
   const [input, setInput] = useState('');
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter' && input.trim()) {
       e.preventDefault();
       if (!tags.includes(input.trim())) {
