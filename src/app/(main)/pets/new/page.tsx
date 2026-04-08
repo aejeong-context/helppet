@@ -14,6 +14,7 @@ interface PetFormData {
   species: 'dog' | 'cat' | 'other';
   breed: string;
   birthDate: string;
+  estimatedAge: number;
   weight: number;
   specialNotes?: string;
 }
@@ -23,6 +24,7 @@ export default function NewPetPage() {
   const createPet = useCreatePet();
   const [conditions, setConditions] = useState<string[]>([]);
   const [profileImage, setProfileImage] = useState<string[]>([]);
+  const [unknownBirthDate, setUnknownBirthDate] = useState(false);
   const {
     register,
     handleSubmit,
@@ -31,14 +33,26 @@ export default function NewPetPage() {
   } = useForm<PetFormData>();
 
   const birthDate = watch('birthDate');
-  const isSenior = birthDate
-    ? new Date().getFullYear() - new Date(birthDate).getFullYear() >= 7
-    : false;
+  const estimatedAge = watch('estimatedAge');
+
+  const isSenior = unknownBirthDate
+    ? (estimatedAge ?? 0) >= 7
+    : birthDate
+      ? new Date().getFullYear() - new Date(birthDate).getFullYear() >= 7
+      : false;
 
   const onSubmit = (data: PetFormData) => {
+    let finalBirthDate = data.birthDate;
+    if (unknownBirthDate && data.estimatedAge) {
+      const now = new Date();
+      now.setFullYear(now.getFullYear() - Number(data.estimatedAge));
+      finalBirthDate = now.toISOString().split('T')[0];
+    }
+
     createPet.mutate(
       {
         ...data,
+        birthDate: finalBirthDate,
         weight: Number(data.weight),
         conditions,
         isSenior,
@@ -50,7 +64,7 @@ export default function NewPetPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-6">🐾 반려동물 등록</h1>
+      <h1 className="text-xl font-bold mb-6">반려동물 등록</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
@@ -86,17 +100,46 @@ export default function NewPetPage() {
           {...register('breed', { required: '품종을 입력해주세요' })}
         />
 
-        <Input
-          id="pet-birthDate"
-          type="date"
-          label="생년월일"
-          error={errors.birthDate?.message}
-          {...register('birthDate', { required: '생년월일을 입력해주세요' })}
-        />
+        <div>
+          <label className="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              checked={unknownBirthDate}
+              onChange={(e) => setUnknownBirthDate(e.target.checked)}
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <span className="text-sm text-gray-600">생년월일을 몰라요</span>
+          </label>
+
+          {unknownBirthDate ? (
+            <Input
+              id="pet-estimatedAge"
+              type="number"
+              label="예상 나이 (살)"
+              placeholder="예: 8"
+              error={errors.estimatedAge?.message}
+              {...register('estimatedAge', {
+                required: unknownBirthDate ? '예상 나이를 입력해주세요' : false,
+                min: { value: 0, message: '0 이상 입력해주세요' },
+                max: { value: 30, message: '30 이하로 입력해주세요' },
+              })}
+            />
+          ) : (
+            <Input
+              id="pet-birthDate"
+              type="date"
+              label="생년월일"
+              error={errors.birthDate?.message}
+              {...register('birthDate', {
+                required: unknownBirthDate ? false : '생년월일을 입력해주세요',
+              })}
+            />
+          )}
+        </div>
 
         {isSenior && (
           <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
-            🧓 7세 이상 노견으로 자동 분류됩니다
+            7세 이상 노견으로 자동 분류됩니다
           </div>
         )}
 

@@ -61,21 +61,18 @@ export default function PetDetailPage() {
       {/* 빠른 메뉴 */}
       <div className="grid grid-cols-3 gap-3">
         <Link href={`/pets/${id}/medications`}>
-          <Card className="text-center hover:border-primary-300 cursor-pointer">
-            <span className="text-2xl">💊</span>
-            <p className="text-xs font-medium mt-1">투약 관리</p>
+          <Card className="text-center hover:shadow-cal-lg cursor-pointer transition-shadow">
+            <p className="text-sm font-semibold">투약 관리</p>
           </Card>
         </Link>
         <Link href={`/pets/${id}/health`}>
-          <Card className="text-center hover:border-primary-300 cursor-pointer">
-            <span className="text-2xl">🩺</span>
-            <p className="text-xs font-medium mt-1">건강기록</p>
+          <Card className="text-center hover:shadow-cal-lg cursor-pointer transition-shadow">
+            <p className="text-sm font-semibold">건강기록</p>
           </Card>
         </Link>
         <Link href={`/pets/${id}/condition`}>
-          <Card className="text-center hover:border-primary-300 cursor-pointer">
-            <span className="text-2xl">📊</span>
-            <p className="text-xs font-medium mt-1">컨디션 일지</p>
+          <Card className="text-center hover:shadow-cal-lg cursor-pointer transition-shadow">
+            <p className="text-sm font-semibold">컨디션 일지</p>
           </Card>
         </Link>
       </div>

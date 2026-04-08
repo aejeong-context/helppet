@@ -112,7 +112,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
 
       {/* 수분 섭취 */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">💧 수분 섭취</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">수분 섭취</label>
         <div className="flex gap-2">
           {([1, 2, 3, 4, 5] as const).map((v) => (
             <button
@@ -125,7 +125,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
                   : 'bg-gray-50 text-gray-500 border border-gray-200'
               }`}
             >
-              {'💧'.repeat(v)}
+              {v}
             </button>
           ))}
         </div>
@@ -137,7 +137,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
         <Input
           id="cond-stool-count"
           type="number"
-          label="💩 배변 횟수"
+          label="배변 횟수"
           placeholder="0"
           min={0}
           value={stoolCount}
@@ -176,7 +176,7 @@ export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoa
 
       {/* 상태 사진 */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">📷 상태 사진 (선택)</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">상태 사진 (선택)</label>
         <ImageUploader maxFiles={3} value={images} onChange={setImages} />
         <p className="text-xs text-gray-400 mt-1">피부, 눈, 상처 등 변화 기록</p>
       </div>

@@ -59,7 +59,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">
-          {selectedPet?.isSenior ? '🧓' : '🐾'} {selectedPet?.name}의 오늘
+{selectedPet?.name}의 오늘
         </h1>
         <PetSelector
           pets={pets}
@@ -71,7 +71,7 @@ export default function DashboardPage() {
       {/* 오늘의 투약 */}
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-gray-700">💊 오늘의 투약</h2>
+          <h2 className="text-sm font-semibold text-gray-700">오늘의 투약</h2>
           <Link href={`/pets/${activePetId}/medications`} className="text-xs text-primary-600">
             관리 →
           </Link>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       {/* 컨디션 차트 + 최근 기록 */}
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-gray-700">📊 최근 컨디션</h2>
+          <h2 className="text-sm font-semibold text-gray-700">최근 컨디션</h2>
           <Link href={`/pets/${activePetId}/condition`} className="text-xs text-primary-600">
             전체보기 →
           </Link>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
       {/* 다가오는 일정 */}
       {upcomingRecords && upcomingRecords.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-gray-700 mb-2">📋 다가오는 일정</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-2">다가오는 일정</h2>
           <UpcomingSchedule records={upcomingRecords} />
         </section>
       )}

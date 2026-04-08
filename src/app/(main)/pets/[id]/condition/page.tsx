@@ -34,7 +34,7 @@ export default function ConditionLogPage() {
   return (
     <div className="max-w-md mx-auto space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">📊 {pet?.name}의 컨디션 일지</h1>
+        <h1 className="text-xl font-bold">{pet?.name}의 컨디션 일지</h1>
         <Button size="sm" onClick={() => setShowForm(true)}>+ 기록</Button>
       </div>
 

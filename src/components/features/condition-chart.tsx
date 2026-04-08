@@ -17,10 +17,10 @@ const FIELD_COLORS: Record<string, string> = {
 };
 
 const FIELD_EMOJI: Record<string, string> = {
-  appetite: '🍽️',
-  activity: '🏃',
-  pain: '💊',
-  mood: '😊',
+  appetite: '',
+  activity: '',
+  pain: '',
+  mood: '',
 };
 
 const fields = Object.keys(CONDITION_LABELS) as Array<keyof typeof CONDITION_LABELS>;
@@ -55,7 +55,7 @@ function CardView({ logs }: { logs: ConditionLog[] }) {
             <div className="space-y-1.5">
               {fields.map((f) => (
                 <div key={f} className="flex items-center justify-between gap-1">
-                  <span className="text-[10px] text-gray-400">{FIELD_EMOJI[f]}</span>
+                  <span className="text-[10px] text-gray-400">{CONDITION_LABELS[f][0]}</span>
                   <ScoreDot value={log[f]} color={FIELD_COLORS[f]} />
                   <span className="text-[10px] font-medium text-gray-600 w-3 text-right">{log[f]}</span>
                 </div>
@@ -91,7 +91,7 @@ function LineChart({ logs }: { logs: ConditionLog[] }) {
         {fields.map((f) => (
           <span key={f} className="flex items-center gap-1 text-[11px] text-gray-500">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: FIELD_COLORS[f] }} />
-            {FIELD_EMOJI[f]} {CONDITION_LABELS[f]}
+            {CONDITION_LABELS[f]}
           </span>
         ))}
       </div>

@@ -27,7 +27,7 @@ export default function MedicationsPage() {
   return (
     <div className="max-w-md mx-auto space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">💊 {pet?.name}의 투약 관리</h1>
+        <h1 className="text-xl font-bold">{pet?.name}의 투약 관리</h1>
         <Button size="sm" onClick={() => setShowForm(true)}>+ 추가</Button>
       </div>
 

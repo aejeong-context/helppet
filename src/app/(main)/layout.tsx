@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/ui/logo';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: '대시보드', icon: '🏠' },
@@ -21,8 +22,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       {/* Desktop Header */}
       <header className="hidden sm:block bg-white shadow-cal">
         <div className="mx-auto max-w-5xl px-6 flex items-center justify-between h-14">
-          <Link href="/dashboard" className="text-lg font-semibold text-primary-500 tracking-tight">
-            오래오래
+          <Link href="/dashboard" className="text-primary-500">
+            <Logo compact className="gap-2" />
           </Link>
           <nav className="flex items-center gap-1">
             {NAV_ITEMS.map((item) => (
@@ -36,7 +37,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     : 'text-warm-400 hover:text-primary-500 hover:bg-warm-100',
                 )}
               >
-                {item.icon} {item.label}
+                {item.label}
               </Link>
             ))}
           </nav>

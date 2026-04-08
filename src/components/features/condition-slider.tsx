@@ -8,22 +8,13 @@ interface ConditionSliderProps {
   onChange: (value: number) => void;
 }
 
-const EMOJIS: Record<string, [string, string]> = {
-  appetite: ['😫', '😊'],
-  activity: ['😫', '😊'],
-  pain: ['😣', '😌'],
-  mood: ['😢', '😊'],
-};
-
 export function ConditionSlider({ field, value, onChange }: ConditionSliderProps) {
-  const [lowEmoji, highEmoji] = EMOJIS[field] || ['😫', '😊'];
-
   return (
     <div className="flex items-center gap-3">
       <span className="w-16 text-sm font-medium text-gray-700">
         {CONDITION_LABELS[field]}
       </span>
-      <span className="text-lg">{lowEmoji}</span>
+      <span className="text-xs text-warm-300">낮음</span>
       <input
         type="range"
         min={1}
@@ -32,8 +23,8 @@ export function ConditionSlider({ field, value, onChange }: ConditionSliderProps
         onChange={(e) => onChange(Number(e.target.value))}
         className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
       />
-      <span className="text-lg">{highEmoji}</span>
-      <span className="w-8 text-sm font-medium text-primary-600 text-right">{value}/5</span>
+      <span className="text-xs text-warm-300">높음</span>
+      <span className="w-8 text-sm font-semibold text-primary-500 text-right">{value}/5</span>
     </div>
   );
 }

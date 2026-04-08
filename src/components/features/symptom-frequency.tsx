@@ -37,7 +37,7 @@ export function SymptomFrequency({ logs, days = 30 }: SymptomFrequencyProps) {
   return (
     <Card>
       <h3 className="text-sm font-semibold text-gray-700 mb-3">
-        🏷️ 증상 빈도 <span className="text-xs text-gray-400">최근 {days}일</span>
+        증상 빈도 <span className="text-xs text-gray-400">최근 {days}일</span>
       </h3>
       <div className="space-y-2">
         {frequency.map(([symptom, count]) => (

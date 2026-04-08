@@ -74,7 +74,7 @@ export function ConditionReport({ logs, period }: ConditionReportProps) {
   return (
     <Card>
       <h3 className="text-sm font-semibold text-gray-700 mb-3">
-        {period === 'week' ? '📊 주간 리포트' : '📊 월간 리포트'}
+        {period === 'week' ? '주간 리포트' : '월간 리포트'}
         <span className="text-xs text-gray-400 ml-2">{currentLogs.length}일 기록</span>
       </h3>
 
