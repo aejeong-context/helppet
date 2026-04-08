@@ -6,10 +6,10 @@ import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/logo';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: '대시보드', icon: '🏠' },
-  { href: '/pets', label: '내 반려동물', icon: '🐾' },
-  { href: '/community', label: '커뮤니티', icon: '💬' },
-  { href: '/adoption', label: '입양/임보', icon: '🏡' },
+  { href: '/dashboard', label: '대시보드' },
+  { href: '/pets', label: '내 반려동물' },
+  { href: '/community', label: '커뮤니티' },
+  { href: '/adoption', label: '입양/임보' },
 ];
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -64,8 +64,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   : 'text-warm-300',
               )}
             >
-              <span className="text-lg">{item.icon}</span>
-              <span>{item.label}</span>
+{item.label}
             </Link>
           ))}
         </div>
