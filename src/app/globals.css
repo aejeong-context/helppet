@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    color: rgba(0, 0, 0, 0.95);
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Notion-style warm selection */
+  ::selection {
+    background-color: rgba(0, 117, 222, 0.15);
+  }
+}

@@ -25,15 +25,17 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-      <div className="fixed inset-0 bg-black/40" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/30" onClick={onClose} />
       <div
         className={cn(
-          'relative z-10 w-full max-w-lg rounded-t-2xl sm:rounded-2xl bg-white p-6 shadow-xl',
+          'relative z-10 w-full max-w-lg rounded-t-xl sm:rounded-xl bg-white p-6 shadow-notion-lg',
           'max-h-[85vh] overflow-y-auto',
           className,
         )}
       >
-        {title && <h2 className="text-lg font-bold mb-4">{title}</h2>}
+        {title && (
+          <h2 className="text-lg font-bold tracking-tight text-[rgba(0,0,0,0.95)] mb-4">{title}</h2>
+        )}
         {children}
       </div>
     </div>

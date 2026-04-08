@@ -11,16 +11,16 @@ export function ConditionBadge({ condition, size = 'sm', removable, onRemove }: 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full bg-red-50 text-red-700 font-medium',
+        'inline-flex items-center rounded-full bg-red-50 text-red-600 font-semibold tracking-wide',
         {
-          'px-2 py-0.5 text-xs': size === 'sm',
-          'px-3 py-1 text-sm': size === 'md',
+          'px-2 py-0.5 text-[11px]': size === 'sm',
+          'px-2.5 py-0.5 text-xs': size === 'md',
         },
       )}
     >
       {condition}
       {removable && (
-        <button onClick={onRemove} className="ml-1 text-red-400 hover:text-red-600">
+        <button onClick={onRemove} className="ml-1 text-red-300 hover:text-red-500">
           &times;
         </button>
       )}
