@@ -22,8 +22,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       {/* Desktop Header */}
       <header className="hidden sm:block bg-white shadow-cal">
         <div className="mx-auto max-w-5xl px-6 flex items-center justify-between h-14">
-          <Link href="/dashboard" className="text-primary-500">
-            <Logo compact className="gap-2" />
+          <Link href="/dashboard" className="text-primary-500 translate-y-1">
+            <Logo compact />
           </Link>
           <nav className="flex items-center gap-1">
             {NAV_ITEMS.map((item) => (
