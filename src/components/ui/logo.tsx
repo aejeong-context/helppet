@@ -12,12 +12,12 @@ export function Logo({ className, compact = false }: LogoProps) {
       <Image
         src="/oreore-logo.png"
         alt="오래오래 로고"
-        width={compact ? 160 : 220}
-        height={compact ? 64 : 88}
+        width={compact ? 240 : 320}
+        height={compact ? 96 : 128}
         priority
         className={cn(
           'object-contain',
-          compact ? 'h-[48px] w-auto' : 'h-[64px] w-auto',
+          compact ? 'h-[72px] w-auto' : 'h-[96px] w-auto',
         )}
       />
     </div>
