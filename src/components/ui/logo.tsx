@@ -7,7 +7,7 @@ type LogoProps = {
 };
 
 export function Logo({ className, compact = false }: LogoProps) {
-  const iconSize = compact ? 28 : 36;
+  const iconSize = compact ? 40 : 48;
 
   return (
     <div className={cn('inline-flex items-center gap-1.5', className)}>
