@@ -8,24 +8,18 @@ type LogoProps = {
 
 export function Logo({ className, compact = false }: LogoProps) {
   return (
-    <div className={cn('inline-flex items-center gap-2', className)}>
+    <div className={cn('inline-flex items-center', className)}>
       <Image
         src="/oreore-logo.png"
         alt="오래오래 로고"
-        width={compact ? 32 : 40}
-        height={compact ? 18 : 22}
+        width={compact ? 160 : 220}
+        height={compact ? 64 : 88}
         priority
         className={cn(
           'object-contain',
-          compact ? 'h-[18px] w-auto' : 'h-[22px] w-auto',
+          compact ? 'h-[48px] w-auto' : 'h-[64px] w-auto',
         )}
       />
-      <span className={cn(
-        'font-semibold tracking-tight text-primary-500',
-        compact ? 'text-base' : 'text-lg',
-      )}>
-        오래오래
-      </span>
     </div>
   );
 }
