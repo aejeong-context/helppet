@@ -11,7 +11,6 @@ import { TodayMedication } from '@/components/features/today-medication';
 import { ConditionChart } from '@/components/features/condition-chart';
 import { ConditionLogForm } from '@/components/features/condition-log-form';
 import { UpcomingSchedule } from '@/components/features/upcoming-schedule';
-import { Collapsible } from '@/components/ui/collapsible';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
@@ -62,16 +61,14 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* 오늘의 투약 - 기본 펼침 */}
-      <Collapsible
-        title="오늘의 투약"
-        defaultOpen
-        right={
+      {/* 오늘의 투약 */}
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-gray-700">오늘의 투약</h2>
           <Link href={`/pets/${activePetId}/medications`} className="text-xs text-primary-600">
             관리 →
           </Link>
-        }
-      >
+        </div>
         {medications && medications.length > 0 ? (
           <TodayMedication petId={activePetId} medications={medications} />
         ) : (
@@ -79,25 +76,25 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-400 text-center">등록된 투약이 없습니다</p>
           </Card>
         )}
-      </Collapsible>
+      </section>
 
       {/* 최근 컨디션 - 차트만 */}
-      <Collapsible
-        title="최근 컨디션"
-        right={
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-gray-700">최근 컨디션</h2>
           <Link href={`/pets/${activePetId}/condition`} className="text-xs text-primary-600">
             전체보기 →
           </Link>
-        }
-      >
+        </div>
         <ConditionChart logs={conditionLogs || []} />
-      </Collapsible>
+      </section>
 
       {/* 다가오는 일정 */}
       {upcomingRecords && upcomingRecords.length > 0 && (
-        <Collapsible title="다가오는 일정">
+        <section>
+          <h2 className="text-sm font-semibold text-gray-700 mb-2">다가오는 일정</h2>
           <UpcomingSchedule records={upcomingRecords} />
-        </Collapsible>
+        </section>
       )}
 
       {/* 컨디션 기록 버튼 */}
