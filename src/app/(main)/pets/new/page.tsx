@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SymptomTagInput } from '@/components/ui/symptom-tag-input';
 import { ImageUploader } from '@/components/ui/image-uploader';
+import { getYearsAgo } from '@/lib/utils';
 
 interface PetFormData {
   name: string;
@@ -44,9 +45,7 @@ export default function NewPetPage() {
   const onSubmit = (data: PetFormData) => {
     let finalBirthDate = data.birthDate;
     if (unknownBirthDate && data.estimatedAge) {
-      const now = new Date();
-      now.setFullYear(now.getFullYear() - Number(data.estimatedAge));
-      finalBirthDate = now.toISOString().split('T')[0];
+      finalBirthDate = getYearsAgo(Number(data.estimatedAge));
     }
 
     createPet.mutate(

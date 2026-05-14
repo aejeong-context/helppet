@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
+import { getDaysAgo } from '@/lib/utils';
 
 import type { ConditionLog } from '@/types';
 
@@ -11,9 +12,7 @@ interface SymptomFrequencyProps {
 }
 
 export function SymptomFrequency({ logs, days = 30 }: SymptomFrequencyProps) {
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  const cutoffStr = cutoff.toISOString().split('T')[0];
+  const cutoffStr = getDaysAgo(days);
 
   const frequency = useMemo(() => {
     const map: Record<string, number> = {};

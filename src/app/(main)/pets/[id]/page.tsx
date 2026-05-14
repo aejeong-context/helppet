@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePet } from '@/hooks/use-pets';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ConditionBadge } from '@/components/ui/condition-badge';
+import { DiseaseHashtags } from '@/components/ui/disease-hashtags';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { calculateAge } from '@/lib/utils';
@@ -45,13 +45,11 @@ export default function PetDetailPage() {
           <p className="text-sm text-gray-500 mt-2">
             {pet.breed} · {calculateAge(pet.birthDate)} · {pet.weight}kg
           </p>
-          {pet.conditions.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-              {pet.conditions.map((c) => (
-                <ConditionBadge key={c} condition={c} size="md" />
-              ))}
-            </div>
-          )}
+          <DiseaseHashtags
+            tags={pet.conditions}
+            emptyState="placeholder"
+            className="justify-center mt-3"
+          />
           {pet.specialNotes && (
             <p className="text-sm text-gray-500 mt-3 bg-warm-100 rounded-lg p-2">{pet.specialNotes}</p>
           )}

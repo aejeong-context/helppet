@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
-import { CONDITION_LABELS } from '@/lib/utils';
+import { CONDITION_LABELS, getDaysAgo } from '@/lib/utils';
 
 import type { ConditionLog } from '@/types';
 
@@ -16,15 +16,9 @@ function avg(nums: number[]) {
 }
 
 export function ConditionReport({ logs, period }: ConditionReportProps) {
-  const now = new Date();
   const daysBack = period === 'week' ? 7 : 30;
-  const cutoff = new Date(now);
-  cutoff.setDate(cutoff.getDate() - daysBack);
-  const cutoffStr = cutoff.toISOString().split('T')[0];
-
-  const prevCutoff = new Date(cutoff);
-  prevCutoff.setDate(prevCutoff.getDate() - daysBack);
-  const prevCutoffStr = prevCutoff.toISOString().split('T')[0];
+  const cutoffStr = getDaysAgo(daysBack);
+  const prevCutoffStr = getDaysAgo(daysBack * 2);
 
   const currentLogs = useMemo(() => logs.filter((l) => l.date >= cutoffStr), [logs, cutoffStr]);
   const prevLogs = useMemo(() => logs.filter((l) => l.date >= prevCutoffStr && l.date < cutoffStr), [logs, prevCutoffStr, cutoffStr]);

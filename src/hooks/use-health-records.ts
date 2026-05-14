@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bkend } from '@/lib/bkend';
+import { getToday } from '@/lib/utils';
 
 import type { HealthRecord } from '@/types';
 
@@ -19,7 +20,7 @@ export function useHealthRecords(petId: string) {
 }
 
 export function useUpcomingSchedules(petId: string) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   return useQuery<HealthRecord[]>({
     queryKey: ['HealthRecords', petId, 'upcoming'],
     queryFn: () =>

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { SymptomTagInput } from '@/components/ui/symptom-tag-input';
 import { ImageUploader } from '@/components/ui/image-uploader';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { getYearsAgo } from '@/lib/utils';
 
 interface PetFormData {
   name: string;
@@ -65,9 +66,7 @@ export default function EditPetPage() {
   const onSubmit = (data: PetFormData) => {
     let finalBirthDate = data.birthDate;
     if (unknownBirthDate && data.estimatedAge) {
-      const now = new Date();
-      now.setFullYear(now.getFullYear() - Number(data.estimatedAge));
-      finalBirthDate = now.toISOString().split('T')[0];
+      finalBirthDate = getYearsAgo(Number(data.estimatedAge));
     }
 
     updatePet.mutate(

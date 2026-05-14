@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { useTodayMedicationLogs, useCheckMedication, useUncheckMedication } from '@/hooks/use-medication-logs';
+import { cn } from '@/lib/utils';
 
 import type { Medication } from '@/types';
 
@@ -61,15 +62,27 @@ export function TodayMedication({ petId, medications }: TodayMedicationProps) {
                     type="button"
                     onClick={() => handleToggle(med._id, ts)}
                     disabled={checkMed.isPending || uncheckMed.isPending}
-                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    aria-pressed={checked ? true : false}
+                    aria-label={
                       checked
-                        ? 'bg-green-100 text-green-700 border border-green-200'
+                        ? `${med.name} ${ts} \uBCF5\uC6A9 \uC644\uB8CC`
                         : isPast
-                          ? 'bg-red-50 text-red-400 border border-red-200'
-                          : 'bg-gray-50 text-gray-500 border border-gray-200'
-                    }`}
+                          ? `${med.name} ${ts} \uBBF8\uBCF5\uC6A9, \uC2DC\uAC04 \uC9C0\uB0A8`
+                          : `${med.name} ${ts} \uC608\uC815`
+                    }
+                    className={cn(
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                      'disabled:opacity-60 disabled:cursor-not-allowed',
+                      checked
+                        ? 'bg-green-500 text-white border-2 border-green-600 shadow-sm'
+                        : isPast
+                          ? 'bg-amber-100 text-amber-800 border-2 border-amber-400 animate-pulse'
+                          : 'bg-gray-50 text-gray-400 border border-gray-200',
+                    )}
                   >
-                    <span>{checked ? '\u2705' : isPast ? '\u23F0' : '\u2B55'}</span>
+                    <span className="text-sm leading-none" aria-hidden="true">
+                      {checked ? '\u2705' : isPast ? '\u23F0' : '\u2610'}
+                    </span>
                     <span>{ts}</span>
                   </button>
                 );

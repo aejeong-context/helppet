@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAdoption } from '@/hooks/use-adoptions';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ConditionBadge } from '@/components/ui/condition-badge';
+import { DiseaseHashtags } from '@/components/ui/disease-hashtags';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
@@ -70,11 +70,7 @@ export default function AdoptionDetailPage() {
           {adoption.conditions.length > 0 && (
             <div>
               <span className="text-gray-500 block mb-1">질병/상태</span>
-              <div className="flex flex-wrap gap-1">
-                {adoption.conditions.map((c) => (
-                  <ConditionBadge key={c} condition={c} size="md" />
-                ))}
-              </div>
+              <DiseaseHashtags tags={adoption.conditions} emptyState="placeholder" />
             </div>
           )}
         </div>

@@ -115,34 +115,38 @@ function LineChart({ logs }: { logs: ConditionLog[] }) {
           }));
 
           return (
-            <svg
-              key={field}
-              className="absolute inset-0 w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              style={{ overflow: 'visible' }}
-            >
-              <polyline
-                fill="none"
-                stroke={FIELD_COLORS[field]}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity="0.6"
-                vectorEffect="non-scaling-stroke"
-                points={points.map((p) => `${p.x},${100 - p.y}`).join(' ')}
-              />
-              {points.map((p, i) => (
-                <circle
-                  key={i}
-                  cx={p.x}
-                  cy={100 - p.y}
-                  r="2.5"
-                  fill={FIELD_COLORS[field]}
+            <div key={field} className="absolute inset-0 pointer-events-none">
+              <svg
+                className="absolute inset-0 w-full h-full"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                style={{ overflow: 'visible' }}
+              >
+                <polyline
+                  fill="none"
+                  stroke={FIELD_COLORS[field]}
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity="0.6"
                   vectorEffect="non-scaling-stroke"
+                  points={points.map((p) => `${p.x},${100 - p.y}`).join(' ')}
+                />
+              </svg>
+              {points.map((p, i) => (
+                <div
+                  key={i}
+                  className="absolute w-2 h-2 rounded-full"
+                  style={{
+                    left: `${p.x}%`,
+                    bottom: `${p.y}%`,
+                    marginLeft: '-4px',
+                    marginBottom: '-4px',
+                    backgroundColor: FIELD_COLORS[field],
+                  }}
                 />
               ))}
-            </svg>
+            </div>
           );
         })}
       </div>

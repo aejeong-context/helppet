@@ -2,11 +2,12 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bkend } from '@/lib/bkend';
+import { getToday } from '@/lib/utils';
 
 import type { MedicationLog } from '@/types';
 
 export function useTodayMedicationLogs(petId: string) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   return useQuery<MedicationLog[]>({
     queryKey: ['MedicationLogs', petId, today],
     queryFn: () => bkend.data.list('MedicationLogs', { petId, date: today }),
@@ -20,7 +21,7 @@ export function useCheckMedication() {
     mutationFn: (data: { petId: string; medicationId: string; timeSlot: string }) =>
       bkend.data.create('MedicationLogs', {
         ...data,
-        date: new Date().toISOString().split('T')[0],
+        date: getToday(),
         takenAt: new Date().toISOString(),
       }),
     onSuccess: (_, variables) =>
