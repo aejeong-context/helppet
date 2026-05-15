@@ -34,8 +34,9 @@ export function TodayMedication({ petId, medications }: TodayMedicationProps) {
   return (
     <div className="space-y-2">
       {medications.map((med) => {
-        const checkedCount = med.timeSlots.filter((ts) => isChecked(med._id, ts)).length;
-        const totalCount = med.timeSlots.length;
+        const sortedTimeSlots = [...med.timeSlots].sort();
+        const checkedCount = sortedTimeSlots.filter((ts) => isChecked(med._id, ts)).length;
+        const totalCount = sortedTimeSlots.length;
         const allDone = checkedCount === totalCount && totalCount > 0;
 
         return (
@@ -52,7 +53,7 @@ export function TodayMedication({ petId, medications }: TodayMedicationProps) {
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              {med.timeSlots.map((ts) => {
+              {sortedTimeSlots.map((ts) => {
                 const checked = !!isChecked(med._id, ts);
                 const isPast = ts <= currentHHMM;
 

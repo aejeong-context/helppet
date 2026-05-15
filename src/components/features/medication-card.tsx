@@ -25,7 +25,7 @@ export function MedicationCard({ medication, onEdit, onToggleActive }: Medicatio
           {medication.dosage} · {medication.frequency}
         </p>
         <p className="text-xs text-gray-400 mt-0.5">
-          {medication.timeSlots.join(', ')}
+          {[...medication.timeSlots].sort().join(', ')}
         </p>
       </div>
       <div className="flex items-center gap-2">
