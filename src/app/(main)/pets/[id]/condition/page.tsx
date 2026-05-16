@@ -22,6 +22,7 @@ export default function ConditionLogPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
+  const fromPath = searchParams.get('from');
 
   const { data: pet } = usePet(petId);
   const { data: logs, isLoading } = useConditionLogs(petId, 30);
@@ -41,7 +42,9 @@ export default function ConditionLogPage() {
 
   const closeForm = () => {
     setShowForm(false);
-    if (editId) {
+    if (fromPath) {
+      router.push(fromPath);
+    } else if (editId) {
       router.replace(`/pets/${petId}/condition`);
     }
   };

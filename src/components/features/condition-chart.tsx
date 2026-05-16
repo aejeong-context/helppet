@@ -97,7 +97,7 @@ export function ConditionChart({ logs, petId }: ConditionChartProps) {
             <li key={log._id} className="first:[&>*]:pt-0 last:[&>*]:pb-0">
               {petId ? (
                 <Link
-                  href={`/pets/${petId}/condition?edit=${log._id}`}
+                  href={`/pets/${petId}/condition?edit=${log._id}&from=/dashboard`}
                   aria-label={`${formatShortDate(log.date)} 컨디션 편집`}
                   className="block py-2 -mx-1 px-1 rounded-md hover:bg-gray-50 active:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300"
                 >

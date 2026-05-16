@@ -16,6 +16,7 @@ export default function MedicationsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
+  const fromPath = searchParams.get('from');
 
   const { data: pet } = usePet(petId);
   const { data: medications, isLoading } = useMedications(petId);
@@ -34,7 +35,9 @@ export default function MedicationsPage() {
 
   const closeForm = () => {
     setShowForm(false);
-    if (editId) {
+    if (fromPath) {
+      router.push(fromPath);
+    } else if (editId) {
       router.replace(`/pets/${petId}/medications`);
     }
   };
