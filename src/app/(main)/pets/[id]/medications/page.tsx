@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useMedications, useCreateMedication, useUpdateMedication } from '@/hooks/use-medications';
 import { usePet } from '@/hooks/use-pets';
 import { MedicationCard } from '@/components/features/medication-card';
@@ -13,11 +13,31 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function MedicationsPage() {
   const { id: petId } = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('edit');
+
   const { data: pet } = usePet(petId);
   const { data: medications, isLoading } = useMedications(petId);
   const createMedication = useCreateMedication();
   const updateMedication = useUpdateMedication();
   const [showForm, setShowForm] = useState(false);
+
+  const editingMed = editId ? medications?.find((m) => m._id === editId) : undefined;
+
+  // ?edit=... 으로 진입 시 자동으로 편집 모달 오픈 (medications 로드 후)
+  useEffect(() => {
+    if (editId && editingMed) {
+      setShowForm(true);
+    }
+  }, [editId, editingMed]);
+
+  const closeForm = () => {
+    setShowForm(false);
+    if (editId) {
+      router.replace(`/pets/${petId}/medications`);
+    }
+  };
 
   const activeMeds = medications?.filter((m) => m.isActive) || [];
   const inactiveMeds = medications?.filter((m) => !m.isActive) || [];
@@ -40,6 +60,7 @@ export default function MedicationsPage() {
               <MedicationCard
                 key={med._id}
                 medication={med}
+                onEdit={() => router.push(`/pets/${petId}/medications?edit=${med._id}`)}
                 onToggleActive={() =>
                   updateMedication.mutate({ id: med._id, data: { isActive: false } })
                 }
@@ -69,13 +90,35 @@ export default function MedicationsPage() {
         </section>
       )}
 
-      <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="투약 등록">
-        <MedicationForm
-          petId={petId}
-          onSubmit={(data) => createMedication.mutate(data, { onSuccess: () => setShowForm(false) })}
-          onCancel={() => setShowForm(false)}
-          isLoading={createMedication.isPending}
-        />
+      <Modal
+        isOpen={showForm}
+        onClose={closeForm}
+        title={editingMed ? '투약 편집' : '투약 등록'}
+      >
+        {editingMed ? (
+          <MedicationForm
+            key={editingMed._id}
+            petId={petId}
+            defaultValues={editingMed}
+            onSubmit={(data) =>
+              updateMedication.mutate(
+                { id: editingMed._id, data },
+                { onSuccess: closeForm },
+              )
+            }
+            onCancel={closeForm}
+            isLoading={updateMedication.isPending}
+          />
+        ) : (
+          <MedicationForm
+            petId={petId}
+            onSubmit={(data) =>
+              createMedication.mutate(data, { onSuccess: closeForm })
+            }
+            onCancel={closeForm}
+            isLoading={createMedication.isPending}
+          />
+        )}
       </Modal>
     </div>
   );

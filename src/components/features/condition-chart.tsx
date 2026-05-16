@@ -1,188 +1,26 @@
 'use client';
 
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
-import { formatShortDate, CONDITION_LABELS } from '@/lib/utils';
+import { formatShortDate } from '@/lib/utils';
 
 import type { ConditionLog } from '@/types';
 
 interface ConditionChartProps {
   logs: ConditionLog[];
+  /** 지정 시 각 행이 해당 pet의 condition 편집 화면으로 가는 링크가 됨 */
+  petId?: string;
 }
 
-const FIELD_COLORS: Record<string, string> = {
-  appetite: '#f97316',
-  activity: '#3b82f6',
-  pain: '#ef4444',
-  mood: '#a855f7',
-};
+const MAX_ROWS = 7;
 
-const FIELD_EMOJI: Record<string, string> = {
-  appetite: '',
-  activity: '',
-  pain: '',
-  mood: '',
-};
-
-const fields = Object.keys(CONDITION_LABELS) as Array<keyof typeof CONDITION_LABELS>;
-
-function ScoreDot({ value, color }: { value: number; color: string }) {
-  return (
-    <div className="flex gap-px">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <div
-          key={i}
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ backgroundColor: i <= value ? color : '#e5e7eb' }}
-        />
-      ))}
-    </div>
-  );
+function scoreStyle(avg: number) {
+  if (avg >= 4) return { color: '#22c55e', emoji: '😊' };
+  if (avg >= 3) return { color: '#f59b20', emoji: '😐' };
+  return { color: '#ef4444', emoji: '😟' };
 }
 
-/** 데이터 4개 이하: 일별 카드형 */
-function CardView({ logs }: { logs: ConditionLog[] }) {
-  return (
-    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(logs.length, 3)}, 1fr)` }}>
-      {logs.map((log) => {
-        const avg = (log.appetite + log.activity + log.pain + log.mood) / 4;
-        const colorKey = avg >= 4 ? '#22c55e' : avg >= 3 ? '#f59b20' : '#ef4444';
-        return (
-          <div key={log._id} className="rounded-lg bg-gray-50 p-2.5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-700">{formatShortDate(log.date)}</span>
-              <span className="text-xs font-bold" style={{ color: colorKey }}>{avg.toFixed(1)}</span>
-            </div>
-            <div className="space-y-1.5">
-              {fields.map((f) => (
-                <div key={f} className="flex items-center justify-between gap-1">
-                  <span className="text-[10px] text-gray-400">{CONDITION_LABELS[f][0]}</span>
-                  <ScoreDot value={log[f]} color={FIELD_COLORS[f]} />
-                  <span className="text-[10px] font-medium text-gray-600 w-3 text-right">{log[f]}</span>
-                </div>
-              ))}
-            </div>
-            {/* 부가 정보 */}
-            <div className="space-y-0.5 pt-1 border-t border-gray-100">
-              {log.waterIntake !== undefined && (
-                <p className="text-[10px] text-blue-500">💧 {log.waterIntake}/5</p>
-              )}
-              {log.stoolCount !== undefined && (
-                <p className="text-[10px] text-amber-600">💩 {log.stoolCount}회</p>
-              )}
-              {log.symptoms && log.symptoms.length > 0 && (
-                <p className="text-[10px] text-red-400 truncate">{log.symptoms.join(', ')}</p>
-              )}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/** 데이터 5개 이상: 라인차트 */
-function LineChart({ logs }: { logs: ConditionLog[] }) {
-  const padding = 8; // % 좌우 여백
-
-  return (
-    <>
-      {/* 범례 */}
-      <div className="flex flex-wrap gap-3 mb-3">
-        {fields.map((f) => (
-          <span key={f} className="flex items-center gap-1 text-[11px] text-gray-500">
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: FIELD_COLORS[f] }} />
-            {CONDITION_LABELS[f]}
-          </span>
-        ))}
-      </div>
-
-      {/* 차트 */}
-      <div className="relative h-28 mb-1">
-        {[1, 2, 3, 4, 5].map((v) => (
-          <div
-            key={v}
-            className="absolute w-full border-t border-dashed border-gray-100"
-            style={{ bottom: `${((v - 1) / 4) * 100}%` }}
-          >
-            <span className="absolute -left-0 -top-2.5 text-[9px] text-gray-300">{v}</span>
-          </div>
-        ))}
-
-        {fields.map((field) => {
-          const points = logs.map((log, i) => ({
-            x: padding + (i / (logs.length - 1)) * (100 - padding * 2),
-            y: ((log[field] - 1) / 4) * 100,
-          }));
-
-          return (
-            <div key={field} className="absolute inset-0 pointer-events-none">
-              <svg
-                className="absolute inset-0 w-full h-full"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                style={{ overflow: 'visible' }}
-              >
-                <polyline
-                  fill="none"
-                  stroke={FIELD_COLORS[field]}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  opacity="0.6"
-                  vectorEffect="non-scaling-stroke"
-                  points={points.map((p) => `${p.x},${100 - p.y}`).join(' ')}
-                />
-              </svg>
-              {points.map((p, i) => (
-                <div
-                  key={i}
-                  className="absolute w-2 h-2 rounded-full"
-                  style={{
-                    left: `${p.x}%`,
-                    bottom: `${p.y}%`,
-                    marginLeft: '-4px',
-                    marginBottom: '-4px',
-                    backgroundColor: FIELD_COLORS[field],
-                  }}
-                />
-              ))}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* X축 */}
-      <div className="flex justify-between" style={{ padding: `0 ${padding - 2}%` }}>
-        {logs.map((log) => (
-          <span key={log._id} className="text-[10px] text-gray-400">{formatShortDate(log.date)}</span>
-        ))}
-      </div>
-
-      {/* 하단 부가 정보 */}
-      {logs.some((l) => l.waterIntake !== undefined || l.stoolCount !== undefined || (l.symptoms && l.symptoms.length > 0)) && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex" style={{ padding: `0 ${padding - 2}%` }}>
-            {logs.map((log) => (
-              <div key={log._id} className="flex-1 min-w-0 text-center space-y-0.5">
-                {log.waterIntake !== undefined && (
-                  <p className="text-[10px] text-blue-500">💧{log.waterIntake}</p>
-                )}
-                {log.stoolCount !== undefined && (
-                  <p className="text-[10px] text-amber-600">💩{log.stoolCount}</p>
-                )}
-                {log.symptoms && log.symptoms.length > 0 && (
-                  <p className="text-[10px] text-red-400 truncate">{log.symptoms[0]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-export function ConditionChart({ logs }: ConditionChartProps) {
+export function ConditionChart({ logs, petId }: ConditionChartProps) {
   if (logs.length === 0) {
     return (
       <Card>
@@ -193,16 +31,85 @@ export function ConditionChart({ logs }: ConditionChartProps) {
     );
   }
 
-  const maxBars = 7;
-  const displayLogs = logs.slice(-maxBars);
+  const displayLogs = logs.slice(-MAX_ROWS).reverse();
 
   return (
     <Card>
-      {displayLogs.length < 5 ? (
-        <CardView logs={displayLogs} />
-      ) : (
-        <LineChart logs={displayLogs} />
-      )}
+      <ul className="divide-y divide-gray-100">
+        {displayLogs.map((log) => {
+          // pain은 "높음=심한 통증"이므로 종합 점수 계산 시 반전
+          const adjustedPain = 6 - log.pain;
+          const avg = (log.appetite + log.activity + adjustedPain + log.mood) / 4;
+          const { color, emoji } = scoreStyle(avg);
+          const filled = Math.round(avg);
+          const hasExtras =
+            log.waterIntake !== undefined ||
+            log.stoolCount !== undefined ||
+            (log.symptoms && log.symptoms.length > 0);
+
+          const rowBody = (
+            <>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-medium text-gray-600 w-9 flex-shrink-0">
+                  {formatShortDate(log.date)}
+                </span>
+                <div className="flex gap-0.5 flex-shrink-0" aria-hidden>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="w-3 h-2 rounded-sm"
+                      style={{ backgroundColor: i <= filled ? color : '#e5e7eb' }}
+                    />
+                  ))}
+                </div>
+                <span className="text-base leading-none flex-shrink-0">{emoji}</span>
+                <span
+                  className="text-sm font-bold w-8 text-right flex-shrink-0"
+                  style={{ color }}
+                >
+                  {avg.toFixed(1)}
+                </span>
+                {petId && (
+                  <span className="ml-auto text-gray-300 text-sm flex-shrink-0" aria-hidden>
+                    ›
+                  </span>
+                )}
+              </div>
+              {hasExtras && (
+                <div className="mt-1 ml-[2.875rem] flex items-center gap-2 text-[11px] text-gray-500">
+                  {log.waterIntake !== undefined && (
+                    <span className="text-blue-500">💧 {log.waterIntake}/5</span>
+                  )}
+                  {log.stoolCount !== undefined && (
+                    <span className="text-amber-600">💩 {log.stoolCount}회</span>
+                  )}
+                  {log.symptoms && log.symptoms.length > 0 && (
+                    <span className="text-red-400 truncate min-w-0">
+                      {log.symptoms.join(', ')}
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          );
+
+          return (
+            <li key={log._id} className="first:[&>*]:pt-0 last:[&>*]:pb-0">
+              {petId ? (
+                <Link
+                  href={`/pets/${petId}/condition?edit=${log._id}`}
+                  aria-label={`${formatShortDate(log.date)} 컨디션 편집`}
+                  className="block py-2 -mx-1 px-1 rounded-md hover:bg-gray-50 active:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300"
+                >
+                  {rowBody}
+                </Link>
+              ) : (
+                <div className="py-2">{rowBody}</div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </Card>
   );
 }

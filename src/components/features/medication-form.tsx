@@ -50,6 +50,7 @@ export function MedicationForm({
   onCancel,
   isLoading,
 }: MedicationFormProps) {
+  const isEdit = !!defaultValues?.timeSlots && defaultValues.timeSlots.length > 0;
   const { register, handleSubmit, control, formState: { errors } } = useForm<
     MedicationFormData & { frequencyType: string; startTime: string; customTimeSlots: string }
   >({
@@ -57,10 +58,10 @@ export function MedicationForm({
       petId,
       isActive: true,
       timeSlots: [],
-      frequencyType: 'twice',
+      ...defaultValues,
+      frequencyType: isEdit ? 'custom' : 'twice',
       startTime: '09:00',
       customTimeSlots: defaultValues?.timeSlots?.join(', ') || '',
-      ...defaultValues,
     },
   });
 

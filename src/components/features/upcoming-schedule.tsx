@@ -1,10 +1,11 @@
 import { Card } from '@/components/ui/card';
 import { formatShortDate } from '@/lib/utils';
 
-import type { HealthRecord } from '@/types';
+import type { HealthRecord, Pet } from '@/types';
 
 interface UpcomingScheduleProps {
   records: HealthRecord[];
+  pets?: Pet[];
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -15,30 +16,42 @@ const TYPE_LABELS: Record<string, string> = {
   emergency: '응급',
 };
 
-export function UpcomingSchedule({ records }: UpcomingScheduleProps) {
+export function UpcomingSchedule({ records, pets }: UpcomingScheduleProps) {
   const upcoming = records.filter((r) => r.nextDate);
 
   if (upcoming.length === 0) {
     return null;
   }
 
+  const petName = (petId: string) =>
+    pets?.find((p) => p._id === petId)?.name;
+
   return (
     <Card>
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">다가오는 일정</h3>
       <div className="space-y-2">
-        {upcoming.map((record) => (
-          <div key={record._id} className="flex items-center gap-3 text-sm">
-            <span className="text-primary-600 font-medium min-w-[3rem]">
-              {formatShortDate(record.nextDate!)}
-            </span>
-            <span className="text-gray-500">
-              {TYPE_LABELS[record.type] || record.type}
-            </span>
-            {record.hospital && (
-              <span className="text-gray-400">— {record.hospital}</span>
-            )}
-          </div>
-        ))}
+        {upcoming.map((record) => {
+          const name = petName(record.petId);
+          return (
+            <div key={record._id} className="flex items-center gap-2 text-sm">
+              <span className="text-primary-600 font-medium min-w-[3rem]">
+                {formatShortDate(record.nextDate!)}
+              </span>
+              {name && (
+                <span className="text-xs font-medium text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded">
+                  {name}
+                </span>
+              )}
+              <span className="text-gray-500">
+                {TYPE_LABELS[record.type] || record.type}
+              </span>
+              {record.hospital && (
+                <span className="text-gray-400 truncate min-w-0">
+                  — {record.hospital}
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </Card>
   );

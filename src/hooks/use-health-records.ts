@@ -35,6 +35,22 @@ export function useUpcomingSchedules(petId: string) {
   });
 }
 
+/** 모든 펫의 다가오는 일정을 합쳐서 조회 (날짜 오름차순). */
+export function useAllUpcomingSchedules(enabled: boolean = true) {
+  const today = getToday();
+  return useQuery<HealthRecord[]>({
+    queryKey: ['HealthRecords', 'upcoming-all'],
+    queryFn: () =>
+      bkend.data.list('HealthRecords', {
+        nextDate_gte: today,
+        _sort: 'nextDate',
+        _order: 'asc',
+        _limit: '10',
+      }),
+    enabled,
+  });
+}
+
 export function useCreateHealthRecord() {
   const queryClient = useQueryClient();
   return useMutation({

@@ -23,6 +23,8 @@ const STOOL_OPTIONS = [
 interface ConditionLogFormProps {
   petId: string;
   previousLog?: ConditionLog | null;
+  /** 편집 모드일 때 기존 로그 값을 폼에 채워넣는다 */
+  defaultValues?: ConditionLog;
   onSubmit: (data: ConditionLogFormData) => void;
   onCancel: () => void;
   isLoading?: boolean;
@@ -39,19 +41,19 @@ function DiffBadge({ current, previous }: { current: number; previous?: number }
   );
 }
 
-export function ConditionLogForm({ petId, previousLog, onSubmit, onCancel, isLoading }: ConditionLogFormProps) {
-  const [appetite, setAppetite] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [activity, setActivity] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [pain, setPain] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [weight, setWeight] = useState('');
-  const [symptoms, setSymptoms] = useState<string[]>([]);
-  const [notes, setNotes] = useState('');
-  const [images, setImages] = useState<string[]>([]);
-  const [date, setDate] = useState(getToday());
-  const [stoolCount, setStoolCount] = useState('');
-  const [stoolType, setStoolType] = useState<ConditionLog['stoolType']>('normal');
-  const [waterIntake, setWaterIntake] = useState<1 | 2 | 3 | 4 | 5>(3);
+export function ConditionLogForm({ petId, previousLog, defaultValues, onSubmit, onCancel, isLoading }: ConditionLogFormProps) {
+  const [appetite, setAppetite] = useState<1 | 2 | 3 | 4 | 5>(defaultValues?.appetite ?? 3);
+  const [activity, setActivity] = useState<1 | 2 | 3 | 4 | 5>(defaultValues?.activity ?? 3);
+  const [pain, setPain] = useState<1 | 2 | 3 | 4 | 5>(defaultValues?.pain ?? 3);
+  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5>(defaultValues?.mood ?? 3);
+  const [weight, setWeight] = useState(defaultValues?.weight !== undefined ? String(defaultValues.weight) : '');
+  const [symptoms, setSymptoms] = useState<string[]>(defaultValues?.symptoms ?? []);
+  const [notes, setNotes] = useState(defaultValues?.notes ?? '');
+  const [images, setImages] = useState<string[]>(defaultValues?.images ?? []);
+  const [date, setDate] = useState(defaultValues?.date ?? getToday());
+  const [stoolCount, setStoolCount] = useState(defaultValues?.stoolCount !== undefined ? String(defaultValues.stoolCount) : '');
+  const [stoolType, setStoolType] = useState<ConditionLog['stoolType']>(defaultValues?.stoolType ?? 'normal');
+  const [waterIntake, setWaterIntake] = useState<1 | 2 | 3 | 4 | 5>(defaultValues?.waterIntake ?? 3);
 
   const scores = { appetite, activity, pain, mood };
 

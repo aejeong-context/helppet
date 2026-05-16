@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { usePets } from '@/hooks/use-pets';
 import { useActiveMedications } from '@/hooks/use-medications';
 import { useConditionLogs } from '@/hooks/use-condition-logs';
-import { useUpcomingSchedules } from '@/hooks/use-health-records';
+import { useAllUpcomingSchedules } from '@/hooks/use-health-records';
 import { useCreateConditionLog } from '@/hooks/use-condition-logs';
 import { PetSelector } from '@/components/features/pet-selector';
 import { TodayMedication } from '@/components/features/today-medication';
@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
   const { data: medications } = useActiveMedications(activePetId);
   const { data: conditionLogs } = useConditionLogs(activePetId);
-  const { data: upcomingRecords } = useUpcomingSchedules(activePetId);
+  const { data: upcomingRecords } = useAllUpcomingSchedules(!!pets && pets.length > 0);
   const createConditionLog = useCreateConditionLog();
 
   const selectedPet = pets?.find((p) => p._id === activePetId);
@@ -86,14 +86,14 @@ export default function DashboardPage() {
             전체보기 →
           </Link>
         </div>
-        <ConditionChart logs={conditionLogs || []} />
+        <ConditionChart logs={conditionLogs || []} petId={activePetId} />
       </section>
 
-      {/* 다가오는 일정 */}
+      {/* 다가오는 일정 (전체 펫) */}
       {upcomingRecords && upcomingRecords.length > 0 && (
         <section>
           <h2 className="text-sm font-semibold text-gray-700 mb-2">다가오는 일정</h2>
-          <UpcomingSchedule records={upcomingRecords} />
+          <UpcomingSchedule records={upcomingRecords} pets={pets} />
         </section>
       )}
 

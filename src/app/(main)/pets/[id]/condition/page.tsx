@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useConditionLogs, useCreateConditionLog } from '@/hooks/use-condition-logs';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useConditionLogs, useCreateConditionLog, useUpdateConditionLog } from '@/hooks/use-condition-logs';
 import { usePet } from '@/hooks/use-pets';
 import { ConditionChart } from '@/components/features/condition-chart';
 import { ConditionLogForm } from '@/components/features/condition-log-form';
@@ -19,12 +19,32 @@ import type { ConditionLog } from '@/types';
 
 export default function ConditionLogPage() {
   const { id: petId } = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('edit');
+
   const { data: pet } = usePet(petId);
   const { data: logs, isLoading } = useConditionLogs(petId, 30);
   const createLog = useCreateConditionLog();
+  const updateLog = useUpdateConditionLog();
   const [showForm, setShowForm] = useState(false);
   const [selectedLog, setSelectedLog] = useState<ConditionLog | null>(null);
   const [reportPeriod, setReportPeriod] = useState<'week' | 'month'>('week');
+
+  const editingLog = editId ? logs?.find((l) => l._id === editId) : undefined;
+
+  useEffect(() => {
+    if (editId && editingLog) {
+      setShowForm(true);
+    }
+  }, [editId, editingLog]);
+
+  const closeForm = () => {
+    setShowForm(false);
+    if (editId) {
+      router.replace(`/pets/${petId}/condition`);
+    }
+  };
 
   if (isLoading) return <LoadingSpinner size="lg" className="mt-20" />;
 
@@ -151,14 +171,34 @@ export default function ConditionLogPage() {
         )}
       </Modal>
 
-      <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="오늘의 컨디션 기록">
-        <ConditionLogForm
-          petId={petId}
-          previousLog={previousLog}
-          onSubmit={(data) => createLog.mutate(data, { onSuccess: () => setShowForm(false) })}
-          onCancel={() => setShowForm(false)}
-          isLoading={createLog.isPending}
-        />
+      <Modal
+        isOpen={showForm}
+        onClose={closeForm}
+        title={editingLog ? `${formatDate(editingLog.date)} 컨디션 편집` : '오늘의 컨디션 기록'}
+      >
+        {editingLog ? (
+          <ConditionLogForm
+            key={editingLog._id}
+            petId={petId}
+            defaultValues={editingLog}
+            onSubmit={(data) =>
+              updateLog.mutate(
+                { id: editingLog._id, data },
+                { onSuccess: closeForm },
+              )
+            }
+            onCancel={closeForm}
+            isLoading={updateLog.isPending}
+          />
+        ) : (
+          <ConditionLogForm
+            petId={petId}
+            previousLog={previousLog}
+            onSubmit={(data) => createLog.mutate(data, { onSuccess: closeForm })}
+            onCancel={closeForm}
+            isLoading={createLog.isPending}
+          />
+        )}
       </Modal>
     </div>
   );
